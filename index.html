@@ -2382,6 +2382,11 @@ let CODEHTML = '', CODEITEM = null;
    draft here; on the 15th QC-approved blogs in the client's open months are released and
    the client is emailed. Clients only ever see a released article. */
 function blogStage(r){
+  // Proud Homes one off, Jhen 16/10/2026: Sep and Oct work was delivered before the hub writer, so the
+  // blog sits in a Google Doc and the page on the live site. Staff see it as ready for QC, the client
+  // sees only the For approval pill.
+  if ((r.doc_url || r.live_url) && r.client_status === 'for_approval' && !r.approved && !ARTICLES[r.id])
+    return ME.kind === 'internal' ? { cls:'b-qc', label:'Ready for QC' } : null;
   if (r.stream !== 'blog' && r.deliverable !== 'linkedin_article') return null;
   const a = ARTICLES[r.id];
   if (ME.kind !== 'internal') {
@@ -3296,7 +3301,7 @@ function itemCard(r, staff){
             + '<button class="notebtn wpbtn" type="button" data-wpcopy="'+id+'" title="See the post and its HTML, then copy it for a WordPress Custom HTML block">View &amp; copy HTML</button>' : '')
       + (staff && ARTICLES[r.id] && li
           ? '<button class="notebtn wpbtn" type="button" data-lipack="'+id+'" title="Article ready to paste, banner, meta and promo post">LinkedIn pack</button>' : '')
-      + link(r.doc_url, '', 'Draft') + link(r.live_url, 'live', 'Live')
+      + link(r.doc_url, '', 'Read &amp; Comment') + link(r.live_url, 'live', 'View Page')
     + '</div></div>'
     + '<div class="ticks">'
       + (isPlanned(r) && !li
@@ -4152,10 +4157,10 @@ function progressMarkup(){
           + '<td><select data-assign="'+id+'">'+assignOpts(r.id)+'</select></td>'
           + '<td><select data-status="'+id+'">'+statusOpts(r.id)+'</select></td>'
           + '<td class="lnk">'
-            + (r.doc_url  ? '<a class="dl" href="'+esc(r.doc_url)+'" target="_blank" rel="noopener">Draft</a>'
+            + (r.doc_url  ? '<a class="dl" href="'+esc(r.doc_url)+'" target="_blank" rel="noopener">Read &amp; Comment</a>'
                           : '<span class="dl-none">—</span>')
             + ' '
-            + (r.live_url ? '<a class="dl live" href="'+esc(r.live_url)+'" target="_blank" rel="noopener">Live</a>'
+            + (r.live_url ? '<a class="dl live" href="'+esc(r.live_url)+'" target="_blank" rel="noopener">View Page</a>'
                           : '<span class="dl-none">—</span>')
             + '</td>'
           + '<td><span class="sp '+esc(r.client_status)+'">'
